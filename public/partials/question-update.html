@@ -1,0 +1,25 @@
+
+				<div class="askeecs-question clearfix">
+					<form novalidate role="form" id="f-question" ng-submit="processForm()">
+						<div class="form-group" ng-class="{'has-error': error.title}">
+							<label for="qTitle">Topic</label>
+							<input type="text" name="title" ng-model="question.title" 
+                class="form-control" id="gTitle" placeholder="Title" required>
+						</div>
+
+            <markedbox></markedbox>
+
+						<div class="form-group" ng-class="{'has-error': error.tags}">
+							<label for="qTags">Tags</label>
+							<input type="text" ng-model="question.tags" 
+                name="tags" class="form-control" id="gTag" 
+                placeholder="Tags" required>
+						</div>
+
+						<div class="form-group">
+							<button id="submit-question" type="submit" 
+                class="btn btn-primary pull-right"> Update Question
+              </button>
+						</div>
+					</form>
+				</div>
