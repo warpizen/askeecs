@@ -40,15 +40,22 @@
 	}
 
 - Get "/q/:id", - Get Specific question
-- Put "/q/:id", - Update/Edit question
+- Post "/q/:id", - Update/Edit question
+- Put "/q/:id", - Delete question
+
 - Get "/q/:id/vote/:opt", - Vote up or down on the given question
+
 - Post "/q/:id/response", - Respond the the Specified question
+- Post "/q/{id}/response/{rid}", - Update Response
+- Put "/q/{id}/response/{rid}", - Delete Response
+
 - Post "/q/:id/response/:resp/comment", - Comment on the specified response
 - Post "/q/:id/comment", - Comment on the specified question
-
 	{
 		"Body":"Your comment"
 	}
+- Post "/q/{id}/comment/{cid}", - Update question comment
+- Put "/q/{id}/comment/{cid}", - Delete question comment
 
 - Get "/salt", - Gets a login salt for a specified user
 
