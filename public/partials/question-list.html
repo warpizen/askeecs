@@ -25,19 +25,18 @@
 							<div>
 								<a href="#" ng-repeat="tag in question.Tags" class="label label-info askeecs-tag">{{tag}}</a>
 							</div>
-							
 						</div>
 					</li>
 				<ul>
 			</div>
 			<div class="center">
 				<ul class="pagination">
-				  <li><a href="#">&laquo;</a></li>
-				  <li><a href="#">1</a></li>
-				  <li><a href="#">2</a></li>
-				  <li><a href="#">3</a></li>
-				  <li><a href="#">4</a></li>
-				  <li><a href="#">5</a></li>
-				  <li><a href="#">&raquo;</a></li>
+          <li ng-hide="prevPage < 1">
+            <a href="#/page/{{ prevPage }}">&laquo;</a>
+          </li>
+          <li><a href="#/page/{{ page }}">{{page}}</a></li>
+          <li ng-hide="nextPage > maxPage">
+            <a href="#/page/{{ nextPage }}">&raquo;</a>
+          </li>
 				</ul>
 			</div>

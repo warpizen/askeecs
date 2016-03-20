@@ -15,6 +15,7 @@ body {
 }
 
 .askeecs-tag {
+	margin-left: 5px;
 	cursor: pointer;
 }
 
@@ -199,5 +200,6 @@ border-color: rgb(76, 174, 76);
 }
 
 .askeecs-question {
-	min-height: 250px;
+	//min-height: 250px;
+	min-height: 100px;
 }

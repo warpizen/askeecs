@@ -3,24 +3,26 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" ng-app="askeecs"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <style>
-            body {
-                padding-top: 50px;
-                padding-bottom: 20px;
-            }
-        </style>
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+    </style>
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/main.css">
 
-        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 		<script src="js/vendor/moment.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 
@@ -30,18 +32,18 @@
 		<script src="js/vendor/hashes.min.js"></script>
 		<script src="js/vendor/bignumber.min.js"></script>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
 		<script src="js/vendor/angular/angular-moment.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-cookies.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-cookies.js"></script>
 		<script src="js/vendor/angular/angular-route.js"></script>
 
 		<script src="js/app.js"></script>
 		<script src="js/controller.js"></script>
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -50,115 +52,88 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Ask EECS</a>
+          <a class="navbar-brand" href="#">Ask</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#/question">Home</a></li>
+            <li class="active"><a href="#/page/1">Home</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right" ng-hide="authenticated">
             <li><a href="#/register">Sign Up</a></li>
             <li><a href="#/login">Login</a></li>
-		</ul>
-		
-			  <ul class="nav navbar-nav navbar-right ng-hide" ng-show="authenticated">
-				  <li class="clearfix"><a href="#/profile">{{user.Username}}</a></li>
-				<li><a href="#" askeecs-logout>Logout</a></li>
-			</ul>
+          </ul>
+          <ul class="nav navbar-nav navbar-right ng-hide" ng-show="authenticated">
+            <li class="clearfix"><a href="#/profile">{{user.Username}}</a></li>
+            <li><a href="#" askeecs-logout>Logout</a></li>
+          </ul>
         </div><!--/.navbar-collapse -->
       </div>
     </div>
 
+
     <div class="container askeecs-main">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-lg-12">
-			<div class="askeecs-main-banner">
-				<img src="img/acm_banner.png" class="img-thumbnail"></img>
-			</div>
-		</div>
-	  </div>
-      <div class="row">
         <div class="col-lg-8">
-			<div class="askeecs-header">
-				<h1>WSU EECS Question & Answer</h1>
-				<p>Ask a question and get an aswer from students and staff.</p>
-				<form role="form">
-					<div class="input-group">
-						<input type="text" class="form-control" id="query" placeholder="search for questions.."></input>
-						<span class="input-group-btn">
-							<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-						</span>
-					</div>
-				</form>
-			</div>
-			<div class="alert alert-warning ng-hide" ng-show="flash">{{flash}}</div>
-			<div ng-view></div>
-        </div>
+			    <div class="askeecs-header">
+				    <h1>Question & Answer</h1>
+				    <p>Ask a question and get an aswer from members.</p>
+				    <form role="form">
+					  <div class="input-group">
+						  <input type="text" class="form-control" id="query" 
+                placeholder="not working"></input>
+						  <span class="input-group-btn">
+							  <button class="btn btn-default" type="submit">
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+						  </span>
+					  </div>
+				    </form>
+          </div> <!-- askeecs-header -->
+          <div class="alert alert-warning ng-hide" ng-show="flashn > 0">{{flash}}</div>
+			    <div ng-view></div>
+        </div> <!-- col-lg-8 -->
+
         <div class="col-lg-4 askeecs-sidebar">
-			<div class="askeecs-ask-btn-center">
-				<a href="#/ask" class="btn btn-primary btn-lg">Ask a Question</a>
-			</div>
-			<div>
-				<h2>Trending Tags</h2>
-				<a href="#" class="label label-info askeecs-tag">cs460</a>
-				<a href="#" class="label label-info askeecs-tag">cs464</a>
-				<a href="#" class="label label-info askeecs-tag">fork</a>
-				<a href="#" class="label label-info askeecs-tag">cs121</a>
-				<a href="#" class="label label-info askeecs-tag">pointers</a>
-				<a href="#" class="label label-info askeecs-tag">andy</a>
-				<a href="#" class="label label-info askeecs-tag">linked-lists</a>
-				<a href="#" class="label label-info askeecs-tag">cs223</a>
-				<a href="#" class="label label-info askeecs-tag">sorting</a>
-				<a href="#" class="label label-info askeecs-tag">cs360</a>
-				<a href="#" class="label label-info askeecs-tag">game</a>
-				<a href="#" class="label label-info askeecs-tag">algorithms</a>
-				<a href="#" class="label label-info askeecs-tag">cs460</a>
-				<a href="#" class="label label-info askeecs-tag">cs464</a>
-				<a href="#" class="label label-info askeecs-tag">fork</a>
-				<a href="#" class="label label-info askeecs-tag">cs121</a>
-				<a href="#" class="label label-info askeecs-tag">pointers</a>
-				<a href="#" class="label label-info askeecs-tag">andy</a>
-				<a href="#" class="label label-info askeecs-tag">linked-lists</a>
-				<a href="#" class="label label-info askeecs-tag">cs223</a>
-				<a href="#" class="label label-info askeecs-tag">sorting</a>
-				<a href="#" class="label label-info askeecs-tag">cs360</a>
-				<a href="#" class="label label-info askeecs-tag">game</a>
-				<a href="#" class="label label-info askeecs-tag">cs460</a>
-				<a href="#" class="label label-info askeecs-tag">cs464</a>
-				<a href="#" class="label label-info askeecs-tag">fork</a>
-				<a href="#" class="label label-info askeecs-tag">cs121</a>
-				<a href="#" class="label label-info askeecs-tag">pointers</a>
-				<a href="#" class="label label-info askeecs-tag">andy</a>
-				<a href="#" class="label label-info askeecs-tag">linked-lists</a>
-				<a href="#" class="label label-info askeecs-tag">cs223</a>
-				<a href="#" class="label label-info askeecs-tag">sorting</a>
-				<a href="#" class="label label-info askeecs-tag">cs360</a>
-				<a href="#" class="label label-info askeecs-tag">game</a>
-			</div>
-			<div class="askeecs-main-banner">
-				<img src="img/block_ad.png" class="img-thumbnail"></img>
-			</div>
-        </div>
-      </div>
+			    <div class="askeecs-ask-btn-center">
+				    <a href="#/ask" class="btn btn-primary btn-lg">Ask a Question</a>
+			    </div>
+			    <div>
+            <h2>Trending Tags</h2>
+            <div ng-repeat="tag in trending.tags">
+              <a href="#" class="label label-info askeecs-tag">{{tag}}</a>
+            </div>
+			    </div>
+          <!-- 
+          <div class="askeecs-main-banner">
+            <img src="img/block_ad.png" class="img-thumbnail"></img>
+          </div>
+          -->
+        </div> <!-- col-lg-4 askeecs-sidebar -->
+      </div> <!-- row -->
 
       <hr>
 
       <footer>
-        <p>&copy; Company 2013</p>
+        <p>&copy; 2016</p>
       </footer>
-    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+    </div> <!-- /container -->        
 
-        <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script src="js/main.js"></script>
-
-        <script>
-            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src='//www.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
-    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
+    </script>
+    <script> 
+      window.jQuery || 
+        document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')
+    </script>
+    <script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src='//www.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
 </html>

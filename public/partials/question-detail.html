@@ -1,143 +1,268 @@
-				<div class="askeecs-question clearfix">
-					<h3>{{question.Title}}</h3>
-					<div class="askeecs-media askeecs-widget askeecs-widget-box">
-						<div class="askeecs-vote-up">
-							<span class="glyphicon glyphicon-chevron-up" ng-click="voteUp()"></span>
-						</div>
-						<div class="askeecs-votes">
-							{{question.Upvotes.length - question.Downvotes.length}}
-						</div>
-						<div class="askeecs-vote-down">
-							<span class="glyphicon glyphicon-chevron-down" ng-click="voteDown()"></span>
-						</div>
-						<div class="askeecs-star-question">
-							<span class="glyphicon glyphicon-star-empty"></span>
-						</div>
-					</div>
-					<div class="askeecs-question-details clearfix" style="">
-						{{question.Body}}
-						<hr>
-						<div class="askeecs-question-author pull-right">
-							<span title="{{question.Timestamp | date:'medium'}}" am-time-ago="question.Timestamp"></span>
+        <!-- start question -->
+        <div class="askeecs-question clearfix">
+          <h3>{{question.Title}}</h3>
+          <!-- vote up and down -->
+          <div class="askeecs-media askeecs-widget askeecs-widget-box">
+            <div class="askeecs-vote-up">
+              <span class="glyphicon glyphicon-chevron-up" 
+                ng-click="voteUp()">
+              </span>
+            </div>
+            <div class="askeecs-votes">
+              {{question.Upvotes.length - question.Downvotes.length}}
+            </div>
+            <div class="askeecs-vote-down">
+              <span class="glyphicon glyphicon-chevron-down" 
+                ng-click="voteDown()">
+              </span>
+            </div>
+            <div class="askeecs-star-question">
+              <span class="glyphicon glyphicon-star-empty"></span>
+            </div>
+          </div>
+          <!-- end vote up down -->
+          <!-- {{question.Body}} as html -->
+          <div class="askeecs-question-details clearfix" style="">
+            <div ng-bind-html="question.HTML"></div>
+            <hr>
+            <div class="askeecs-question-author pull-right">
+              <span title="{{question.Timestamp | date:'medium'}}" 
+                am-time-ago="question.Timestamp">
+              </span>
+              <a href="#">{{question.Author}}</a>
+              <span class="badge">0</span>
+              <a href="#/update/{{question.ID}}" class="btn btn-default btn-sm"  
+                ng-hide="question.Author != user.Username">update</a>
+              <button class="btn btn-default btn-sm" 
+                ng-click="question_delete=true"
+                ng-hide="question.Author != user.Username">delete</button>
+              
+              <modaldel title="Delete this contents" 
+                visible="question_delete">
+                <p>Are you sure?</p>
+                <button type="button" class="btn btn-default btn-sm"
+                  data-dismiss="modal">Cancel</button>
+                <button type="button" data-dismiss="modal"
+                  class="btn btn-default btn-sm"
+                  ng-click="deleteQuestion()">Ok</button>
+              </modaldel>
+             
+            </div>
 
-							<a href="#">{{question.Author}}</a>
-							<span class="badge">0</span>
-						</div>
-						<div>
-							<a href="#" ng-repeat="tag in question.Tags" class="label label-info askeecs-tag">{{tag}}</a>
-						</div>
-						<ul class="askeecs-comment-list list-unstyled">
-							<li class="askeecs-comment" ng-repeat="comment in question.Comments">
-							<p><a href="#" ><span class="glyphicon glyphicon-arrow-up"></span></a> {{comment.Body}} – <a href="#" class="">{{comment.Author}}</a> <small><span title="{{question.Timestamp | date:'medium'}}" am-time-ago="question.Timestamp"></span></small></p>
-							</li>
-						</ul>
-						<a href="" ng-click="scomment=true" ng-hide="scomment">add comment</a>
-						<div class="ng-hide" ng-show="scomment">
-							<form novalidation role="form" ng-submit="processComment()">
-								<div class="form-group" ng-class"{'has-error': errorComment}">
-									<div class="row">
-										<div class="col-md-9">
-											<textarea ng-model="comment.Body" class="form-control"></textarea>
-										</div>
-										<div class="col-md-3">
-											<button type="submit" class="btn btn-default btn-sm">Add Comment</button>
-										</div>
-									</div>
-									<small ng-bind="comment.Body.length | commentremark"></small>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-				<ul class="row nav nav-tabs askeecs-topic-nav">
-					<li class="active"><a href="#">Most Votes</a></li>
-					<li><a href="#">Recent</a></li>
-				</ul>
-				<ul class="askeecs-responses">
-					<li class="askeecs-question clearfix" ng-repeat="response in question.Responses">
-						<div class="askeecs-media askeecs-widget askeecs-widget-box">
-							<div class="askeecs-vote-up">
-								<span class="glyphicon glyphicon-chevron-up"></span>
-							</div>
-							<div class="askeecs-votes">
-								{{response.Score.Up - response.Score.Down}}
-							</div>
-							<div class="askeecs-vote-down">
-								<span class="glyphicon glyphicon-chevron-down"></span>
-							</div>
-							<div class="askeecs-star-question">
-								<span class="glyphicon glyphicon-star-empty"></span>
-							</div>
-						</div>
-						<div class="askeecs-question-details clearfix" style="">
-							{{response.Body}}
-							<hr>
-							<div class="askeecs-question-author pull-right">
-								<span title="{{response.Timestamp | date:'medium'}}" am-time-ago="response.Timestamp"></span>
+            <div>
+              <a href="#" ng-repeat="tag in question.Tags" class="label
+                label-info askeecs-tag">{{tag}}</a>
+            </div>
+            <!-- update question -->
+            <!-- end update question -->
 
-								<a href="#">{{response.Author}}</a>
-								<span class="badge">0</span>
-							</div>
-							<!--
-							<ul class="askeecs-comment-list list-unstyled">
-								<li class="askeecs-comment" ng-repeat="comment in response.comments">
-								<p><a href="#" ><span class="glyphicon glyphicon-arrow-up"></span></a> {{comment.Body}} – <a href="#" class="">{{comment.Author}}</a> <small><span title="{{question.Timestamp | date:'medium'}}" am-time-ago="question.Timestamp"></span></small></p>
-								</li>
-							</ul>
-							<a href="" ng-click="scomment=true" ng-hide="scomment">add comment</a>
-							<div class="ng-hide" ng-show="scomment">
-								<form novalidation role="form" ng-submit="processRESComment()">
-									<input type="hidden" ng-model="rescomment.ID" value="{{response.ID}}">
-									<div class="form-group" ng-class"{'has-error': errorComment}">
-										<div class="row">
-											<div class="col-md-9">
-												<textarea ng-model="rescomment.Body" class="form-control"></textarea>
-											</div>
-											<div class="col-md-3">
-												<button type="submit" class="btn btn-default btn-sm">Add Comment</button>
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-							-->
-						</div>
-					</li>
-				</ul>
-				<div>
+            <!-- comment list -->
+            <ul class="askeecs-comment-list list-unstyled">
+              <li class="askeecs-comment" 
+                ng-repeat="comment in question.Comments">
+              <p>
+                <a href="#" >
+                  <span class="glyphicon glyphicon-arrow-up"></span>
+                </a> 
+                {{comment.Body}} – 
+                <a href="#" class="">{{comment.Author}}</a>
+                <small>
+                  <span title="{{question.Timestamp | date:'medium'}}" 
+                    am-time-ago="question.Timestamp">
+                  </span>
+                </small>
 
-				</div>
-				<div class="ng-hide" ng-show="authenticated">
-					<h4>Submit an Answer</h4>
-					<form novalidate role="form" ng-submit="processForm()">
-						<div class="form-group" ng-class="{'has-error': errorMarkdown}">
-							<div class="alert alert-danger" ng-show="errorMarkdown">{{errorMarkdown}}</div>
-							<div class="btn-toolbar" role="toolbar">
-								<div class="btn-group btn-group-textbox">
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-bold"></span></button>
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-italic"></span></button>
-								</div>
-								<div class="btn-group btn-group-textbox">
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-link"></span></button>
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-quote-left"></span></button>
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-code"></span></button>
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-picture-o"></span></button>
-								</div>
-								<div class="btn-group btn-group-textbox">
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-list-ul"></span></button>
-									<button type="button" class="btn btn-default btn-sm"><span class="fa fa-list-ol"></span></button>
-								</div>
-							</div>
-							<textarea name="body" class="form-control form-control-has-group" rows="10" id="mk-input" ng-model='response.Body' ng-change='md2Html()' required></textarea>
-						</div>
-						<hr>
-						<div class="form-group">
-							<label for="">Preview</label>
-							<div class="askeecs-question-preview" ng-bind-html='htmlSafe' id="mk-preview">
-							</div>
-						</div>
-						<div class="form-group">
-							<button id="submit-question" type="submit" class="btn btn-primary pull-right">Submit Response</button>
-						</div>
-					</form>
-				</div>
+                <!-- add comment -->
+                <a href="" ng-click="comment_update=true" 
+                  class="btn btn-default btn-sm"
+                  ng-hide="comment.Author != user.Username">update</a>
+                <button class="btn btn-default btn-sm" 
+                  ng-click="comment_delete=true"
+                  ng-hide="comment.Author != user.Username">delete</button>
+                <!-- why ?? div ?? it should be inserted to work properly -->
+                <div></div>
+
+                <modaldel title="this comment will be deleted" 
+                  visible="comment_delete">
+                  <p>Are you sure?</p>
+                  <button type="button" class="btn btn-default btn-sm"
+                    data-dismiss="modal">No</button>
+                  <button type="button" data-dismiss="modal"
+                    ng-click="deleteQuestionComment(comment.ID)"
+                    class="btn btn-default btn-sm">Yes</button>
+                </modaldel>
+
+                <!-- comment textarea -->
+                <div class="ng-hide" ng-show="comment_update">
+                  <form novalidation role="form" 
+                    ng-submit="updateComment(comment.Body, comment.ID)">
+                    <div class="form-group" ng-class="{'has-error': errorComment}">
+                      <div class="row">
+                        <div class="col-md-9">
+                          <textarea ng-model="comment.Body" 
+                            class="form-control">
+                          </textarea>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="submit" 
+                            class="btn btn-default btn-sm">Update
+                          </button>
+                        </div>
+                      </div>
+                      <small ng-bind="comment.Body.length | commentremark"></small>
+                    </div>
+                  </form>
+                </div>
+                <!-- end add commnet textarea -->
+
+              </p>
+              </li>
+            </ul>
+            <!-- end comment list -->
+            <!-- add comment -->
+            <a href="" ng-click="comment_add=true" 
+              ng-hide="comment_add">add comment</a>
+            <div class="ng-hide" ng-show="comment_add">
+              <form novalidation role="form" ng-submit="processComment()">
+                <div class="form-group" ng-class="{'has-error': errorComment}">
+                  <div class="row">
+                    <div class="col-md-9">
+                      <textarea ng-model="comment.Body" 
+                        class="form-control">
+                      </textarea>
+                    </div>
+                    <div class="col-md-3">
+                      <button type="submit" 
+                        class="btn btn-default btn-sm">Add Comment
+                      </button>
+                    </div>
+                  </div>
+                  <small ng-bind="comment.Body.length | commentremark"></small>
+                </div>
+              </form>
+            </div>
+            <!-- end add commnet textarea -->
+          </div>
+          <!-- {{question.Body}} as html -->
+        </div>
+        <!-- end question -->
+
+        <ul class="row nav nav-tabs askeecs-topic-nav">
+          <li class="active"><a href="#">Most Votes</a></li>
+          <li><a href="#">Recent</a></li>
+        </ul>
+
+        <ul class="askeecs-responses">
+          <li class="askeecs-question clearfix" 
+            ng-repeat="res in question.Responses">
+            <div class="askeecs-media askeecs-widget askeecs-widget-box">
+              <div class="askeecs-vote-up">
+                <span class="glyphicon glyphicon-chevron-up"></span>
+              </div>
+              <div class="askeecs-votes">
+                {{res.Score.Up - res.Score.Down}}
+              </div>
+              <div class="askeecs-vote-down">
+                <span class="glyphicon glyphicon-chevron-down"></span>
+              </div>
+              <div class="askeecs-star-question">
+                <span class="glyphicon glyphicon-star-empty"></span>
+              </div>
+            </div>
+
+            <div class="askeecs-question-details clearfix" style="">
+              <div ng-bind-html="res.HTML" ng-hide="uresponse"></div>
+              <hr>
+              <div class="askeecs-question-author pull-right">
+                <span title="{{res.Timestamp | date:'medium'}}" 
+                  am-time-ago="res.Timestamp">
+                </span>
+                <a href="#">{{res.Author}}</a>
+                <span class="badge">0</span>
+
+                <a href="" ng-click="putData(res.Body, res.ID);" 
+                  class="btn btn-default btn-sm"
+                  ng-hide="res.Author != user.Username">update</a>
+                <a href="" ng-click="answer_delete=true" 
+                  class="btn btn-default btn-sm"
+                  ng-hide="res.Author != user.Username">delete</a>
+
+                <modaldel title="Delete this contents" 
+                  visible="answer_delete">
+                  <p>Are you sure?</p>
+                  <button type="button" class="btn btn-default btn-sm"
+                    data-dismiss="modal">Cancel</button>
+                  <button type="button" data-dismiss="modal"
+                    class="btn btn-default btn-sm"
+                    ng-click="deleteAnswer(res.ID)">OK</button>
+                </modaldel>
+
+              </div>
+
+              <!-- later!!
+              <div>
+                <a href="#" ng-repeat="tag in question.Tags" class="label
+                  label-info askeecs-tag">{{tag}}</a>
+              </div>
+              <hr>
+              <ul class="askeecs-comment-list list-unstyled">
+                <li class="askeecs-comment" 
+                  ng-repeat="comment in response.comments">
+                  <p>
+                  <a href="#">
+                    <span class="glyphicon glyphicon-arrow-up"></span>
+                  </a> 
+                  {{comment.Body}} – 
+                  <a href="#" class="">{{comment.Author}}</a> 
+                  <small>
+                    <span title="{{question.Timestamp | date:'medium'}}" 
+                      am-time-ago="question.Timestamp"></span>
+                  </small>
+                  </p>
+                </li>
+              </ul>
+
+              <a href="" ng-click="scomment=true" 
+                ng-hide="scomment">add comment</a>
+              <div class="ng-hide" ng-show="scomment">
+                <form novalidation role="form" ng-submit="processRESComment()">
+                  <input type="hidden" ng-model="rescomment.ID" 
+                    value="{{response.ID}}">
+                  <div class="form-group" ng-class="{'has-error': errorComment}">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <textarea ng-model="rescomment.Body" 
+                          class="form-control">
+                        </textarea>
+                      </div>
+                      <div class="col-md-3">
+                        <button type="submit" 
+                          class="btn btn-default btn-sm">Add Comment</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              -->
+
+            </div>
+          </li>
+        </ul>
+
+
+        <!-- submit an answer -->
+        <div class="ng-hide" ng-show="authenticated">
+          <h4>Submit an Answer</h4>
+          <form novalidate role="form" ng-submit="processForm(externId)">
+            <markedbox></markedbox> 
+            <div class="form-group">
+              <button id="submit-question" type="submit" ng-show="!extern"
+                class="btn btn-primary pull-right">Submit Response
+              </button>
+              <button id="submit-question" type="submit" ng-show="extern"
+                class="btn btn-primary pull-right">Update Response
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- end submit a answer -->
