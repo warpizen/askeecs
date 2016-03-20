@@ -1,26 +1,28 @@
 package main
 
 import (
-	"labix.org/v2/mgo/bson"
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
-	"bytes"
-	"time"
 	"io"
+	"log"
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Question struct {
-	ID bson.ObjectId "_id,omitempty"
-	Title string
-	Author string
-	Tags []string
-	Upvotes []bson.ObjectId
+	ID        bson.ObjectId "_id,omitempty"
+	Title     string
+	Author    string
+	Tags      []string
+	Upvotes   []bson.ObjectId
 	Downvotes []bson.ObjectId
 	Timestamp time.Time
-	LastEdit time.Time
-	Body string
+	LastEdit  time.Time
+	Body      string
 	Responses []*Response
-	Comments []*Comment
+	Comments  []*Comment
 }
 
 func QuestionFromJson(r io.Reader) *Question {
@@ -39,9 +41,50 @@ func (q *Question) AddComment(c *Comment) {
 	}
 }
 
+func (q *Question) UpdateComment(c *Comment) {
+	if c != nil {
+		log.Println(c)
+		for i, comment := range q.Comments {
+			if comment.ID == c.ID {
+				q.Comments[i] = c
+				break
+			}
+		}
+	}
+}
+
+func (q *Question) DeleteComment(cid bson.ObjectId) {
+	for i, comment := range q.Comments {
+		if comment.ID == cid {
+			q.Comments = append(q.Comments[:i], q.Comments[i+1:]...)
+			break
+		}
+	}
+}
+
 func (q *Question) AddResponse(r *Response) {
 	if r != nil {
 		q.Responses = append(q.Responses, r)
+	}
+}
+
+func (q *Question) UpdateResponse(r *Response) {
+	if r != nil {
+		for i, response := range q.Responses {
+			if response.ID == r.ID {
+				q.Responses[i] = r
+				break
+			}
+		}
+	}
+}
+
+func (q *Question) DeleteResponse(rid bson.ObjectId) {
+	for i, response := range q.Responses {
+		if response.ID == rid {
+			q.Responses = append(q.Responses[:i], q.Responses[i+1:]...)
+			break
+		}
 	}
 }
 
@@ -58,7 +101,7 @@ func (q *Question) GetIdHex() string {
 }
 
 func (q *Question) GetResponse(id bson.ObjectId) *Response {
-	for _,v := range q.Responses {
+	for _, v := range q.Responses {
 		if v.ID == id {
 			return v
 		}
@@ -67,12 +110,12 @@ func (q *Question) GetResponse(id bson.ObjectId) *Response {
 }
 
 func (q *Question) HasVoteBy(user bson.ObjectId) int {
-	for _,v := range q.Upvotes {
+	for _, v := range q.Upvotes {
 		if v == user {
 			return 1
 		}
 	}
-	for _,v := range q.Downvotes {
+	for _, v := range q.Downvotes {
 		if v == user {
 			return -1
 		}
@@ -88,7 +131,7 @@ func (q *Question) Upvote(user bson.ObjectId) bool {
 	case 1:
 		return false
 	case -1:
-		for i,v := range q.Downvotes {
+		for i, v := range q.Downvotes {
 			if v == user {
 				q.Downvotes = append(q.Downvotes[:i], q.Downvotes[i+1:]...)
 				q.Upvotes = append(q.Upvotes, user)
@@ -107,7 +150,7 @@ func (q *Question) Downvote(user bson.ObjectId) bool {
 	case -1:
 		return false
 	case 1:
-		for i,v := range q.Upvotes {
+		for i, v := range q.Upvotes {
 			if v == user {
 				q.Upvotes = append(q.Upvotes[:i], q.Upvotes[i+1:]...)
 				q.Downvotes = append(q.Downvotes, user)
@@ -119,11 +162,11 @@ func (q *Question) Downvote(user bson.ObjectId) bool {
 }
 
 type Response struct {
-	ID bson.ObjectId
-	Author string
+	ID        bson.ObjectId
+	Author    string
 	Timestamp time.Time
 	//Score Score
-	Body string
+	Body     string
 	Comments []*Comment
 }
 
@@ -142,10 +185,10 @@ func (r *Response) AddComment(c *Comment) {
 }
 
 type Comment struct {
-	ID bson.ObjectId
+	ID        bson.ObjectId
 	Timestamp time.Time
-	Author string
-	Body string
+	Author    string
+	Body      string
 	//Score Score
 }
 

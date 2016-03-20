@@ -1,35 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"github.com/codegangsta/martini"
-	"github.com/martini-contrib/sessions"
-	"encoding/hex"
-	"labix.org/v2/mgo/bson"
-	"crypto/sha256"
-	"log"
-	"crypto/rand"
 	"bytes"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type AEServer struct {
-	db *Database
-	questions *Collection
-	users *Collection
-
-	tokens map[string]*User
-	ch_login chan *Session
-	ch_logout chan string
-	ch_getu chan *AuthReq
-
-	salts map[string]string
-	ch_newsalt chan KVPair
-	ch_delsalt chan string
-	ch_getsalt chan StrResponse
-
-	m *martini.ClassicMartini
+	db           *Database
+	questions    *Collection
+	users        *Collection
+	tokens       map[string]*User
+	ch_login     chan *Session
+	ch_logout    chan string
+	ch_getu      chan *AuthReq
+	salts        map[string]string
+	ch_newsalt   chan KVPair
+	ch_delsalt   chan string
+	ch_getsalt   chan StrResponse
+	sessionStore *SessionStorer
+	m            *mux.Router
 }
 
 type KVPair struct {
@@ -37,18 +37,18 @@ type KVPair struct {
 }
 
 type StrResponse struct {
-	Arg string
+	Arg  string
 	Resp chan string
 }
 
 type Session struct {
 	Token string
-	Who *User
+	Who   *User
 }
 
 type AuthReq struct {
 	Token string
-	Ret chan *User
+	Ret   chan *User
 }
 
 func NewServer() *AEServer {
@@ -71,26 +71,46 @@ func NewServer() *AEServer {
 	s.ch_newsalt = make(chan KVPair)
 
 	//Initialize martini
-	s.m = martini.Classic()
+	//s.m = martini.Classic()
+	// port
+	//s.m.RunOnAddr(":3000")
+	s.m = mux.NewRouter()
 	return s
 }
 
 func (s *AEServer) Init(secretfile string) {
+	log.Println("AEServer Init called")
 	//Setup cookie store for sessions
-	secret,err := ioutil.ReadFile(secretfile)
+	// func main() { fmt.Println(base64.StdEncoding.EncodeToString(
+	// securecookie.GenerateRandomKey(64))) }
+	secret, err := ioutil.ReadFile(secretfile)
 	if err != nil {
 		panic(err)
 	}
-	store := sessions.NewCookieStore(secret)
-	s.m.Use(sessions.Sessions("ask_eecs_auth_session", store))
+	log.Println("read secret : " + string(secret))
+	//decode := make([]byte, 128)
+	decode, err1 := base64.StdEncoding.DecodeString(string(secret))
+	if err1 != nil {
+		panic(err1)
+	}
+	log.Println("read decode secret : " + string(decode))
+	s.sessionStore = NewSessionStorer("askeecs", decode)
+	// must call s.sessionStore.SetParam(w, r)
 
+	//s.m.Use(sessions.Sessions("ask_eecs_auth_session", store))
 	s.SetupRouting()
 }
 
 func (s *AEServer) Serve() {
 	go s.SyncSessionRoutine()
 	go s.SyncSaltRoutine()
-	s.m.Run()
+
+	// server port
+	//s.m.RunOnAddr(":3000")
+	//s.m.Run()
+	if err := http.ListenAndServe(":3000", nil); err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
 }
 
 func genRandString() string {
@@ -109,7 +129,7 @@ func (s *AEServer) GetSessionToken() string {
 }
 
 func (s *AEServer) FindUserByName(name string) *User {
-	users := s.users.FindWhere(bson.M{"username":name})
+	users := s.users.FindWhere(bson.M{"username": name})
 	if len(users) == 0 {
 		fmt.Println("User not found.")
 		return nil
@@ -118,11 +138,12 @@ func (s *AEServer) FindUserByName(name string) *User {
 	return user
 }
 
-func (s *AEServer) GetAuthedUser(sess sessions.Session) *User {
+func (s *AEServer) GetAuthedUser(w http.ResponseWriter, r *http.Request) *User {
 	//Verify user account or something
-	login := sess.Get("Login")
-	if login == nil {
-		log.Printf("Not logged in!!")
+	s.sessionStore.SetParam(w, r)
+	login, ok := s.sessionStore.Get("Login")
+	if !ok {
+		log.Printf("Invalid cookie!")
 		return nil
 	}
 
@@ -149,7 +170,7 @@ func (s *AEServer) SyncSessionRoutine() {
 		case ses := <-s.ch_login:
 			s.tokens[ses.Token] = ses.Who
 		case log := <-s.ch_logout:
-			if _,ok := s.tokens[log]; ok {
+			if _, ok := s.tokens[log]; ok {
 				delete(s.tokens, log)
 			}
 		case get := <-s.ch_getu:
@@ -167,7 +188,7 @@ func (s *AEServer) SyncSaltRoutine() {
 	for {
 		select {
 		case gr := <-s.ch_getsalt:
-			slt,ok := s.salts[gr.Arg]
+			slt, ok := s.salts[gr.Arg]
 			if !ok {
 				gr.Resp <- ""
 			} else {
@@ -182,7 +203,7 @@ func (s *AEServer) SyncSaltRoutine() {
 }
 
 func Message(s string) string {
-	return Stringify(JM{"Message" : s})
+	return Stringify(JM{"Message": s})
 }
 
 func DoHash(pass, salt string) string {

@@ -1,22 +1,26 @@
 package main
 
 import (
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
-	"log"
 	"errors"
+	"log"
+
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var ErrorNotFound = errors.New("No documents found!")
 var ErrorNullResponse = errors.New("Got back null response from mgo.")
 
+const PAGER int = 5
+
 type Database struct {
-	db *mgo.Database
+	db          *mgo.Database
 	collections map[string]*Collection
 }
 
 func NewDatabase(host string) *Database {
-	s,err := mgo.Dial(host)
+	log.Println("NewDatabase ....." + host)
+	s, err := mgo.Dial(host)
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +33,7 @@ func NewDatabase(host string) *Database {
 }
 
 func (db *Database) Collection(name string, typ I) *Collection {
-	c,ok := db.collections[name]
+	c, ok := db.collections[name]
 	if ok {
 		return c
 	}
@@ -46,8 +50,8 @@ type I interface {
 }
 
 type Collection struct {
-	col *mgo.Collection
-	cache map[string]I
+	col      *mgo.Collection
+	cache    map[string]I
 	template I
 }
 
@@ -70,7 +74,7 @@ func (c *Collection) FindByID(ID bson.ObjectId) I {
 		log.Println(ErrorNullResponse)
 		return nil
 	}
-	cnt,err := q.Count()
+	cnt, err := q.Count()
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -84,15 +88,15 @@ func (c *Collection) FindByID(ID bson.ObjectId) I {
 	return obj
 }
 
-func (c *Collection) FindWhere(match bson.M) []I {
+func (c *Collection) FindSelect(match bson.M, sel bson.M) []I {
 	log.Println(match)
-	q := c.col.Find(match)
+	q := c.col.Find(match).Select(sel)
 	if q == nil {
 		log.Println(ErrorNullResponse)
 		return nil
 	}
 
-	n,err := q.Count()
+	n, err := q.Count()
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -106,8 +110,93 @@ func (c *Collection) FindWhere(match bson.M) []I {
 	i := q.Iter()
 	v := c.template.New()
 	for i.Next(v) {
-		out = append(out,v)
+		out = append(out, v)
 		v = c.template.New()
 	}
 	return out
+}
+
+func (c *Collection) FindWhere(match bson.M) []I {
+	log.Println(match)
+	q := c.col.Find(match)
+	if q == nil {
+		log.Println(ErrorNullResponse)
+		return nil
+	}
+
+	n, err := q.Count()
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	if n == 0 {
+		log.Println("Nothing matched the query...")
+		return nil
+	}
+
+	var out []I
+	i := q.Iter()
+	v := c.template.New()
+	for i.Next(v) {
+		out = append(out, v)
+		v = c.template.New()
+	}
+	return out
+}
+
+func (c *Collection) FindWhereN(match bson.M, page int) []I {
+	log.Println(match)
+	//total := c.GetCount()
+	limit := PAGER
+	//skip := total - PAGER*page
+	skip := PAGER * (page - 1)
+	if skip < 0 {
+		skip = 0
+	}
+	q := c.col.Find(match).Sort("-timestamp").Skip(skip).Limit(limit)
+	if q == nil {
+		log.Println(ErrorNullResponse)
+		return nil
+	}
+
+	n, err := q.Count()
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	if n == 0 {
+		log.Println("Nothing matched the query...")
+		return nil
+	}
+
+	var out []I
+	i := q.Iter()
+	v := c.template.New()
+	for i.Next(v) {
+		out = append(out, v)
+		v = c.template.New()
+	}
+	return out
+}
+
+func (c *Collection) GetCount() int {
+	log.Println("db - GetCount called")
+	//q := c.col.Find(bson.M{})
+	n, err := c.col.Count()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return n
+}
+
+func (c *Collection) Delete(ID bson.ObjectId) error {
+	log.Println("db - Delete called")
+	err := c.col.RemoveId(ID)
+	if err != nil {
+		log.Println("db Not Found ID")
+		return err
+	}
+
+	return nil
 }

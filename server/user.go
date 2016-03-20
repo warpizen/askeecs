@@ -1,18 +1,19 @@
 package main
 
 import (
-	"labix.org/v2/mgo/bson"
-	"time"
 	"encoding/json"
 	"io"
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 type User struct {
-	ID bson.ObjectId "_id,omitempty"
+	ID       bson.ObjectId "_id,omitempty"
 	Username string
 	Password string `json:"-"`
-	Salt string `json:"-"`
-	login time.Time
+	Salt     string `json:"-"`
+	login    time.Time
 }
 
 func (u *User) New() I {
@@ -26,7 +27,7 @@ func (u *User) GetID() bson.ObjectId {
 type AuthAttempt struct {
 	Username string
 	Password string
-	Salt string
+	Salt     string
 }
 
 func AuthFromJson(r io.Reader) *AuthAttempt {
@@ -50,14 +51,36 @@ func (u *User) MakeComment(r io.Reader) *Comment {
 	return c
 }
 
-func (u *User) MakeRespose(r io.Reader) *Response {
+func (u *User) UpdateComment(r io.Reader, cid bson.ObjectId) *Comment {
+	c := CommentFromJson(r)
+	if c == nil {
+		return nil
+	}
+	//log.Println(c)
+	c.Author = u.Username
+	c.ID = cid
+	c.Timestamp = time.Now()
+	return c
+}
+
+func (u *User) MakeResponse(r io.Reader) *Response {
 	resp := ResponseFromJson(r)
 	if r == nil {
 		return nil
 	}
-
 	resp.Author = u.Username
 	resp.ID = bson.NewObjectId()
+	resp.Timestamp = time.Now()
+	return resp
+}
+
+func (u *User) UpdateResponse(r io.Reader, rid bson.ObjectId) *Response {
+	resp := ResponseFromJson(r)
+	if r == nil {
+		return nil
+	}
+	resp.Author = u.Username
+	resp.ID = rid
 	resp.Timestamp = time.Now()
 	return resp
 }
