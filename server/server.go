@@ -83,13 +83,13 @@ func (s *AEServer) Init(secretfile string) {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("read secret : " + string(secret))
+	//log.Println("read secret : " + string(secret))
 	//decode := make([]byte, 128)
 	decode, err1 := base64.StdEncoding.DecodeString(string(secret))
 	if err1 != nil {
 		panic(err1)
 	}
-	log.Println("read decode secret : " + string(decode))
+	//log.Println("read decode secret : " + string(decode))
 	s.sessionStore = NewSessionStorer("askeecs", decode)
 	s.SetupRouting()
 }
