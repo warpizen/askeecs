@@ -70,10 +70,6 @@ func NewServer() *AEServer {
 	s.ch_logout = make(chan string)
 	s.ch_newsalt = make(chan KVPair)
 
-	//Initialize martini
-	//s.m = martini.Classic()
-	// port
-	//s.m.RunOnAddr(":3000")
 	s.m = mux.NewRouter()
 	return s
 }
@@ -95,20 +91,14 @@ func (s *AEServer) Init(secretfile string) {
 	}
 	log.Println("read decode secret : " + string(decode))
 	s.sessionStore = NewSessionStorer("askeecs", decode)
-	// must call s.sessionStore.SetParam(w, r)
-
-	//s.m.Use(sessions.Sessions("ask_eecs_auth_session", store))
 	s.SetupRouting()
 }
 
 func (s *AEServer) Serve() {
 	go s.SyncSessionRoutine()
 	go s.SyncSaltRoutine()
-
 	// server port
-	//s.m.RunOnAddr(":3000")
-	//s.m.Run()
-	if err := http.ListenAndServe(":3000", nil); err != nil {
+	if err := http.ListenAndServe(":1313", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
