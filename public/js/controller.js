@@ -312,10 +312,10 @@ askeecsControllers.controller('QuestionDetailCtrl',
     }
     $scope.processForm = function (externId) {
       console.log($scope.response.Body);
-      delete $scope.errorMarkdown;
+      delete $scope.error.markdown;
       var err = false;
       if ($scope.markdown.length < 50) {
-        $scope.errorMarkdown = "Your response must be 50 characters or more."
+        $scope.error.markdown = "Your response must be 50 characters or more."
         err = true;
       }
       if (err) {
